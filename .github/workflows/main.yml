@@ -16,17 +16,19 @@ jobs:
           port: 22
           script: |
             cd /home/chat-server
-            touch .env
-            echo "PORT=${{ secrets.PORT }}" >> .env
-            echo "NATS_URL=${{ secrets.NATS_URL }}" >> .env
-            echo "NAME=${{ secrets.NAME }}" >> .env
-            echo "PASS=${{ secrets.PASS }}" >> .env
-            echo "DATABASE=${{ secrets.DATABASE }}" >> .env
-            echo "SECRET=${{ secrets.SECRET }}" >> .env
-            echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}" >> .env
-            echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> .env
-            echo "AWS_REGION=${{ secrets.AWS_REGION }}" >> .env
-            cat .env
+            if [ ! -f .env ]; then
+              touch .env
+              echo "PORT=${{ secrets.PORT }}" >> .env
+              echo "NATS_URL=${{ secrets.NATS_URL }}" >> .env
+              echo "NAME=${{ secrets.NAME }}" >> .env
+              echo "PASS=${{ secrets.PASS }}" >> .env
+              echo "DATABASE=${{ secrets.DATABASE }}" >> .env
+              echo "SECRET=${{ secrets.SECRET }}" >> .env
+              echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}" >> .env
+              echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> .env
+              echo "AWS_REGION=${{ secrets.AWS_REGION }}" >> .env
+              cat .env
+            fi
             docker compose down
             git pull origin main
             docker compose up -d
