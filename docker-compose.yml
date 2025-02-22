@@ -1,0 +1,62 @@
+version: '3.8'
+
+services:
+  api_gateway:
+    build: ./api-gateway
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./api-gateway:/app/
+    command: npm run start:dev
+    environment:
+      - PORT=3000
+    env_file:
+      - .env
+  auth_service:
+    build: ./auth
+    volumes:
+      - ./auth:/app/
+    command: npm run start:dev
+    env_file:
+      - .env
+  chat_service:
+    build: ./chat
+    volumes:
+      - ./chat:/app/
+    command: npm run start:dev
+    env_file:
+      - .env
+  user_service:
+    build: ./user
+    volumes:
+      - ./user:/app/
+    command: npm run start:dev
+    env_file:
+      - .env
+  images_service:
+    build: ./images
+    volumes:
+      - ./images:/app/
+    command: npm run start:dev
+    env_file:
+      - .env
+  redis_service:
+    build: ./redis
+    volumes:
+      - ./redis:/app/
+    command: npm run start:dev
+    env_file:
+      - .env
+  nats:
+    image: nats
+    ports:
+      - "4222:4222"
+  redis:
+    image: redis
+    container_name: nest-redis
+    volumes:
+      - ./redis.conf:/etc/redis/redis.conf
+    ports:
+      - "6379:6379"
+    command: ["redis-server", "/etc/redis/redis.conf"]
+  
