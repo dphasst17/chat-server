@@ -4,10 +4,10 @@ on:
     branches: [main]
 
 jobs:
-  deploy:
+  create_env:
     runs-on: ubuntu-22.04
     steps:
-      - name: Deploy using ssh
+      - name: Create .env
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }}
@@ -16,6 +16,7 @@ jobs:
           port: 22
           script: |
             cd /home/chat-server
+            docker compose down
             if [ ! -f .env ]; then
               touch .env
               echo "PORT=${{ secrets.PORT }}" >> .env
@@ -29,6 +30,19 @@ jobs:
               echo "AWS_REGION=${{ secrets.AWS_REGION }}" >> .env
               cat .env
             fi
-            docker compose down
+  deploy:
+    needs: create_env
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Deploy using ssh
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          port: 22
+          script: |
+            set -e
+            cd /home/chat-server
             git pull origin main
             docker compose up -d

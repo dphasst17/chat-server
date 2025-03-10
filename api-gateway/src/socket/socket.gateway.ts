@@ -22,6 +22,19 @@ export class SocketGateway {
     emitData(url: string, data: any) {
         this.socket.emit(url, data)
     }
+    @SubscribeMessage('push_image')
+    async pushImage(client: Socket, data: {
+        idChat: string,
+        list: any[],
+        dataLength: number,
+    }) {
+        try {
+            this.socket.emit('s_g_r_push_image', data);
+        }
+        catch (error) {
+            console.error('Error handling push image:', error);
+        }
+    }
     @SubscribeMessage('u_create_group')
     async createGroup(client: Socket, data: any) {
         try {
